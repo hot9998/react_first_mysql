@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import "./App.css";
 import axios from "axios";
+import moment from "moment";
 
 class App extends Component {
   constructor(props) {
@@ -12,19 +13,30 @@ class App extends Component {
   }
 
   getData = async () => {
-    const { board } = await axios.get("http://localhost:5000/list");
-    console.log(board);
+    const board = await axios.get("http://localhost:5000/list");
+    console.log(board.data);
+    console.log(board.data);
 
-    this.setState({ board: board, isLoading: false });
+    this.setState({ board: board.data, isLoading: false });
   };
 
   componentDidMount() {
     this.getData();
-    console.log(this.state.board);
   }
 
   render() {
     const { isLoading, board } = this.state;
+
+    const boardList = board.map((board, index) => (
+      <tr key={index}>
+        <td>{board.bno}</td>
+        <td>{board.title}</td>
+        <td>{board.writer}</td>
+        <td>{moment(board.regdate).format("YYYY-MM-DD")}</td>
+        <td>{board.viewcnt}</td>
+      </tr>
+    ));
+
     return (
       <div>
         {isLoading ? (
@@ -43,7 +55,7 @@ class App extends Component {
                   <th>조회수</th>
                 </tr>
               </thead>
-              <tbody></tbody>
+              <tbody>{boardList}</tbody>
             </table>
           </div>
         )}
